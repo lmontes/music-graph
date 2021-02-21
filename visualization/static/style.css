@@ -1,0 +1,28 @@
+#graph {
+  height:85vh;
+  border: 0px;
+  padding: 0px;
+  margin: 0px;
+}
+
+#detail {
+  height: 85vh;
+  border: 0px;
+  padding: 0px;
+  margin: 0px;
+}
+
+nav, footer {
+  height: 7.5vh;
+}
+
+footer {
+  padding-top: 1em;
+}
+
+body, html {
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  overflow-x: hidden;
+}

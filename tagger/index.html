@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+    <title>Tagger</title>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        iframe {
+            height: 80vh;
+        }
+
+        body {
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <br>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-5">
+                <button id="musician" type="button" class="btn btn-primary btn-lg btn-block">musician</button>
+            </div>
+            <div class="col-5">
+                <button id="other" type="button" class="btn btn-primary btn-lg btn-block">other</button>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+      <iframe id="web" class="col-md-11 bg-light" src="about:blank" ></iframe>
+    </div>
+    <script>
+        var current_id = null;
+
+        function loadWikipediaPage(page) {
+            var protocol = "http";
+            if(window.location.protocol === "https:")
+                protocol = "https";
+
+            $("#web").attr("src", `${protocol}://en.wikipedia.org/wiki/${page}`);
+        }
+
+        function getNextPage(){
+            $.ajax({
+                url: "/next",
+                method: "get",
+                success: function(data) {
+                    current_id = data.id;
+                    loadWikipediaPage(data.url);
+                },
+                error: function(jqXHR, status, error){
+                    current_id = null;
+                    $("#web").attr("src", "about:blank");
+                }
+            });
+        }
+
+        function tagPage(id, label) {
+            if (current_id === null)
+                return;
+
+            $.ajax({
+                url: "/tag",
+                method: "post",
+                contentType : "application/json",
+                data: JSON.stringify({
+                    id: current_id,
+                    class: label
+                }),
+                success: getNextPage
+            });
+        }
+
+        $("#musician").click(() => tagPage(current_id, "musician"));
+        $("#other").click(() => tagPage(current_id, "other"));
+
+        getNextPage();
+    </script>
+</body>
+</html>
