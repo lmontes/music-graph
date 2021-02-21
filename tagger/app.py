@@ -15,6 +15,11 @@ app = Flask(__name__)
 
 @app.route("/")
 def root():
+    global index, unclassified_pages
+
+    index = -1
+    unclassified_pages = list(sorted(os.listdir(os.path.join(raw_data_dir, "unclassified"))))
+
     return send_from_directory("", "index.html")
 
 
@@ -51,8 +56,6 @@ def tag():
 
 
 if __name__ == "__main__":
-    unclassified_pages = list(sorted(os.listdir(os.path.join(raw_data_dir, "unclassified"))))
-
     with open(os.path.join(data_dir, "classes.csv")) as f:
         reader = csv.DictReader(f, delimiter=";")
         url_mapping = {row["md5"]: row["url"] for row in reader}
